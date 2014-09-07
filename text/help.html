@@ -1,0 +1,132 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>
+L-System Generator How-To
+</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<style type="text/css">
+.main {
+	height:100%;
+	background: rgb(0,0,0);
+	color: white;
+	font-family:Calibri;
+	font-size:16px;
+}
+
+a:link {color:#FF0000;}
+a:visited {color:#990000;}
+a:hover {color:#FF2222;}
+a.hover {color:#FF5555;}
+ol {list-style:none;}
+
+</style>
+</head>
+<body class="main">
+<h1>Lindenmayer System Generator Help</h1>
+<h2>Table of Contents:</h2>
+<ol>
+  <li><a href="#intro"><span>1.</span>&nbsp;Introduction</a>
+    <ol>
+      <li><a href="#lsys"><span>1.1</span>&nbsp;L-Systems</a></li>
+      <li><a href="#turtle"><span>1.2</span>&nbsp;Turtle Interpretation</a></li>
+    </ol>
+  </li>
+  <li><a href="#making"><span>2.</span>&nbsp;Making L-Systems</a>
+    <ol>
+      <li><a href="#fields"><span>2.1</span>&nbsp;Operators</a></li>
+      <li><a href="#grammar"><span>2.2</span>&nbsp;Grammar</a></li>
+    </ol>
+  </li>
+  <li><a href="#saving"><span>3.</span>&nbsp;Saving</a>
+    <ol>
+      <li><a href="#savingl"><span>3.1</span>&nbsp;Saving L-Systems</a></li>
+      <li><a href="#opening"><span>3.2</span>&nbsp;Opening L-Systems</a></li>
+    </ol>
+  </li>
+  <li><a href="#contact"><span>4.</span>&nbsp;Contact</a></li>
+</ol>
+<p>
+<h2><span>1.</span>&nbsp;<a id="intro">Introduction</a></h2>
+<h3><span>1.1</span>&nbsp;<a id="lsys">L-Systems</a></h3>
+<p>TBC</p><h3><span>1.2</span>&nbsp;<a id="turtle">Turtle Interpretation</a>
+</h3>
+<p>TBC</p>
+<h2>&nbsp;</h2>
+<h2><span>2.</span>&nbsp;<a id="making">Maki<strong></strong>ng L-Systems</a></h2>
+<h3><span>2.1</span>&nbsp;Operators</h3>
+<p>The operators for generic 2-D L-Systems are F, f, +, -, [, and ]. In this application, you will find that additional operators are also usable. For instance, ^ and v are also operators. A simple table below describes the function of the different operators.</p>
+<table width="356" border="0">
+  <tr>
+    <td width="50"><div align="center"><strong>F</strong></div></td>
+    <td width="296">Draw a line</td>
+  </tr>
+  <tr>
+    <td><div align="center"><strong>f</strong></div></td>
+    <td>Move forward</td>
+  </tr>
+  <tr>
+    <td><div align="center"><strong>+</strong></div></td>
+    <td>Turn left</td>
+  </tr>
+  <tr>
+    <td><div align="center"><strong>-</strong></div></td>
+    <td>Turn right</td>
+  </tr>
+  <tr>
+    <td><div align="center"><strong>[</strong></div></td>
+    <td>Push current position on stack</td>
+  </tr>
+  <tr>
+    <td><div align="center"><strong>]</strong></div></td>
+    <td>Pop position off stack and go to that position</td>
+  </tr>
+  <tr>
+    <td><div align="center">^</div></td>
+    <td>Increase line width</td>
+  </tr>
+  <tr>
+    <td><div align="center">v</div></td>
+    <td>Decrease line width</td>
+  </tr>
+</table>
+<p>How can these be used?</p>
+<p>Well, for example, here is a possible sequence of operations:</p>
+<p>F+F+F</p>
+<p>This will draw a line, turn to the left, draw a line, turn to the left, and the draw a third line. The result that you get with angle = 90°.</p>
+<p><img src="F+F+F.png" alt="F+F+F with angle=90 degrees" width="218" height="193" /></p>
+<h3><span>2.2</span>&nbsp;<a id="grammar">Grammar</a></h3>
+<p>The basis for L-Systems are grammars. These are a collection of context-free productions which serve as the &quot;rules&quot; for the L-System. They come in the form:</p>
+<p> X -&gt; { sequence }</p>
+<p>An example would be:</p>
+<p>X -&gt; { F+F+F }</p>
+<p>This replaces all instance of X with the right hand side of the production which is within the {}'s. For instance, if a particular sequence as follows was:</p>
+<p>f-X-f</p>
+<p>The rule for X would replace the X with its defined sequence so that it would represent:</p>
+<p>f-F+F+F-f</p>
+<p>Now what if we we use a rule within a rule such as with:</p>
+<p>X -&gt; { [X+X+X] }</p>
+<p>It appears as if you would end up having an infinitely long string.</p>
+<p>X -&gt; { [X+X+X]+[X+X+X]+[X+X+X] }</p>
+<p>X -&gt; { [[X+X+X]+[X+X+X]+[X+X+X]]+[[X+X+X]+[X+X+X]+[X+X+X]]+[[X+X+X]+[X+X+X]+[X+X+X]] }</p>
+<p>...</p>
+<p>How do we know how may times to expand this production? Well that depends on a parameter, n, which determines how many times we exapnd this production. After the last expansion, the key for the rule, in this case &quot;X,&quot; is replaced with F.</p>
+<p>For instance, if n = 1, </p>
+<p>X -&gt; { [F+F+F] }</p>
+<p>If n = 2,</p>
+<p>X -&gt; { [X+X+X]+[X+X+X]+[X+X+X] }</p>
+<p> etc...</p>
+<p>Now what if you want to do something more complicated, say using two rules that use each other?</p>
+<p>A -&gt; { +B-A-B }<br />
+B -&gt; { -A+B+A }</p>
+<p>This is perfectly valid in an L-System and in this application.</p>
+<h2><span>3.</span>&nbsp;<a id="saving">Saving</a></h2>
+<h3><span>3.1</span>&nbsp;<a id="savingl">Saving L-Systems</a></h3>
+<p>TBC</p>
+<h3><span>3.2</span>&nbsp;<a id="opening">Opening L-Systems</a></h3>
+<p>TBC</p>
+<h2>&nbsp;</h2>
+<h2><span>4.</span>&nbsp;<a id="contact">Contact</a></h2>
+<p>Created by Jeff Manzione. If you have any questions or comments, please email me at <a href="mailto:jeff@jeffreymanzione.com">jeff@jeffreymanzione.com</a>.</p>
+</body>
+</html>
